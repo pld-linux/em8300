@@ -8,8 +8,8 @@ Group:		Base/Kernel
 Source0:	http://dxr3.sourceforge.net/download/%{name}-%{version}.tar.gz
 URL:		http://dxr3.sourceforge.net/
 Provides:	dxr3
-Requires(post,postun):	/sbin/ldconfig
-Requires(post,postun):	/sbin/depmod
+Requires(post,postun):/sbin/ldconfig
+Requires(post,postun):/sbin/depmod
 BuildRequires:	kernel-headers
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -20,17 +20,16 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		_xbindir		%{_prefix}/X11R6/bin
 
 %description
-
-em8300 is a Linux driver for Creative DXR3 and Sigma Designs Hollywood+
-cards. Both cards are hardware MPEG1, MPEG2, AC3 decoders. Additionaly
-Xine and MPlayer with help of this driver allow you to play all
-the video formats that they recognise through the tv-out of these cards.
+em8300 is a Linux driver for Creative DXR3 and Sigma Designs
+Hollywood+ cards. Both cards are hardware MPEG1, MPEG2, AC3 decoders.
+Additionaly Xine and MPlayer with help of this driver allow you to
+play all the video formats that they recognise through the tv-out of
+these cards.
 
 %description -l pl
-
-em8300 pozwala na uruchomienie pod Linuksem kart Creative DXR3
-i Sigma Designs Hollywood+. Obie karty, o prawie identycznej konstrukcji
-s± sprzêtowymi dekoderami MPEG1, MPEG2 i AC3. Programy Xine i MPlayer
+em8300 pozwala na uruchomienie pod Linuksem kart Creative DXR3 i Sigma
+Designs Hollywood+. Obie karty, o prawie identycznej konstrukcji s±
+sprzêtowymi dekoderami MPEG1, MPEG2 i AC3. Programy Xine i MPlayer
 pozwalaj± przy u¿yciu tego sterownika na odtwarzanie przez wyj¶cie
 telewizyjne tych kart nie tylko w/w formatów, ale tak¿e wszystkich
 formatów video, które te programy rozpoznaj±.
@@ -42,27 +41,23 @@ Group:		Base/Kernel
 Requires:	%{name} = %{version}
 
 %description devel
-
-Header files and additional scripts useful for developers of
-em8300 apps.
+Header files and additional scripts useful for developers of em8300
+apps.
 
 %description devel -l pl
-
 Pliki nag³ówkowe i skrypty przydatne dla autorów aplikacji
 korzystaj±cych z em8300.
 
 %package gtk
 Summary:	Utility programs for em8300 using gtk+
-Summary(pl):    Programy u¿ytkowe em8300 u¿ywaj±ce bibliteki gtk+
+Summary(pl):	Programy u¿ytkowe em8300 u¿ywaj±ce bibliteki gtk+
 Group:		Base/Kernel
 Requires:	%{name} = %{version}
 
 %description gtk
-
 Utility programs for em8300 using gtk+ toolkit.
 
 %description gtk -l pl
-
 Programy u¿ytkowe em8300 u¿ywaj±ce biblioteki gtk+.
 
 %prep
@@ -81,17 +76,17 @@ install -d $RPM_BUILD_ROOT
 
 %{__make} install DESTDIR=$RPM_BUILD_ROOT
 cd modules
-make install-newkern prefix=$RPM_BUILD_ROOT
+%{__make} install-newkern prefix=$RPM_BUILD_ROOT
 find $RPM_BUILD_ROOT/lib/modules -name "*.o" -print | sed s,$RPM_BUILD_ROOT,, >../mods.lst
 mv INSTALL INSTALL.modules
 install -d $RPM_BUILD_ROOT/%{_datadir}/misc
-install -m 644 em8300.uc $RPM_BUILD_ROOT/%{_datadir}/misc
+install em8300.uc $RPM_BUILD_ROOT/%{_datadir}/misc
 
 cd $RPM_BUILD_ROOT
 install -d ./%{_xbindir}
 mv ./%{_bindir}/* ./%{_xbindir}
 
-cd $RPM_BUILD_ROOT/usr/share
+cd $RPM_BUILD_ROOT%{_datadir}
 install -m 755 em8300/microcode_upload.pl ../bin/em8300_microcode_upload
 
 
