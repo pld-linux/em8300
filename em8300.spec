@@ -4,8 +4,8 @@
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	userspace	# don't build userspace tools
 #
-# sparc disabled - no I2C_ALGOBIT in our kernel24 on sparc
-%ifarch %{ix86} alpha ppc
+# sparc(32) disabled - no I2C_ALGOBIT in kernel24
+%ifarch %{ix86} alpha ppc sparc64
 %define		_kernelsrcdir	/usr/src/linux-2.4
 %else
 %undefine	with_kernel
@@ -179,12 +179,10 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/em8300/{modules.tar.gz,em8300.sysv}
 %endif
 
 %if %{with kernel}
-%{__make} -C modules install-newkern \
-	KERNVER=%{_kernel_ver} \
-	SMODINST=kernel/drivers/video
-	prefix=$RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/video
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/video
 for f in em8300.o adv717x.o bt865.o; do
+	install modules/$f \
+		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video/$f
 	install modules/$f.smp \
 		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/$f
 done
