@@ -15,6 +15,7 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	gtk+-devel >= 1.2.0
+BuildRequires:	rpmbuild(macros) >= 1.118
 Requires(post,postun):	/sbin/ldconfig
 Requires(post,postun):	/sbin/depmod
 Requires(post,preun):	/sbin/chkconfig
@@ -117,11 +118,11 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
 
 %postun
 /sbin/ldconfig
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 
 %post
 /sbin/ldconfig
-/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
+%depmod %{_kernel_ver}
 /sbin/chkconfig --add %{name}
 if [ -f /var/lock/subsys/%{name} ]; then
 	/etc/rc.d/init.d/%{name} restart 1>&2
