@@ -2,14 +2,15 @@
 Summary:	dxr3 and h+ driver
 Summary(pl):	sterowniki dla dxr3 i h+
 Name:		em8300
-Version:	0.12.0
+Version:	0.13.0
 Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dxr3.sourceforge.net/download/%{name}-%{version}.tar.gz
-# Source0-md5:	720a5dfba76789321ba6d7e0f8e1ecbe
+# Source0-md5:	306984dfd4f0f29538179cbbf391f5a8
 Source1:	%{name}.init
 Source2:	%{name}.sysconf
+Patch0:		%{name}-automake.patch
 URL:		http://dxr3.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -79,10 +80,14 @@ Programy u¿ytkowe em8300 u¿ywaj±ce biblioteki gtk+.
 
 %prep
 %setup -q
+%patch0 -p1
 
 %build
 rm -f missing
-sh bootstrap
+%{__libtoolize}
+%{__aclocal} -I autotools
+%{__autoconf}
+%{__autoheader}
 %{__automake}
 %configure
 %{__make}
@@ -140,7 +145,7 @@ fi
 
 %files -f mods.lst
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog COPYING README 
+%doc AUTHORS ChangeLog COPYING README
 %doc modules/{README*,INSTALL*,devices.sh,devfs_symlinks}
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_datadir}/misc/*
