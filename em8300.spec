@@ -7,6 +7,7 @@ Release:	1
 License:	GPL
 Group:		Libraries
 Source0:	http://dxr3.sourceforge.net/download/%{name}-%{version}.tar.gz
+# Source0-md5:	720a5dfba76789321ba6d7e0f8e1ecbe
 Source1:	%{name}.init
 Source2:	%{name}.sysconf
 URL:		http://dxr3.sourceforge.net/
