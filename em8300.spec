@@ -14,7 +14,7 @@ License:	GPL
 Group:		Applications/System
 #Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
 Source0:	http://www.kernel.pl/~adasi/%{name}-%{snap}.tar.bz2
-# Source0-md5:	b0ea281df97c830642c5917cfc435d6c
+# Source0-md5:	832f5a03826701a71193ca235973dd12
 Source1:	%{name}.init
 Source2:	%{name}.sysconf
 Patch0:		%{name}-automake.patch
