@@ -147,7 +147,7 @@ fi
 %{_includedir}/libdxr3
 %{_includedir}/linux/*
 %attr(755,root,root) %{_libdir}/lib*.so
-%attr(755,root,root) %{_libdir}/lib*.la
+%{_libdir}/lib*.la
 %attr(755,root,root) %dir %{_datadir}/em8300
 %attr(755,root,root) %{_datadir}/em8300/*
 
