@@ -7,14 +7,13 @@ License:	GPL
 Group:		Base/Kernel
 Source0:	http://dxr3.sourceforge.net/download/%{name}-%{version}.tar.gz
 URL:		http://dxr3.sourceforge.net/
-Provides:	dxr3
-Requires(post,postun):/sbin/ldconfig
-Requires(post,postun):/sbin/depmod
-BuildRequires:	kernel-headers
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	gtk+-devel
+Requires(post,postun):/sbin/ldconfig
+Requires(post,postun):/sbin/depmod
+Provides:	dxr3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		_xbindir		%{_prefix}/X11R6/bin
@@ -79,6 +78,7 @@ cd modules
 %{__make} install-newkern prefix=$RPM_BUILD_ROOT
 find $RPM_BUILD_ROOT/lib/modules -name "*.o" -print | sed s,$RPM_BUILD_ROOT,, >../mods.lst
 mv INSTALL INSTALL.modules
+
 install -d $RPM_BUILD_ROOT/%{_datadir}/misc
 install em8300.uc $RPM_BUILD_ROOT/%{_datadir}/misc
 
@@ -88,7 +88,6 @@ mv ./%{_bindir}/* ./%{_xbindir}
 
 cd $RPM_BUILD_ROOT%{_datadir}
 install -m 755 em8300/microcode_upload.pl ../bin/em8300_microcode_upload
-
 
 %clean
 rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
@@ -105,20 +104,19 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
 %defattr(644,root,root,755)
 %doc AUTHORS ChangeLog COPYING README
 %doc modules/README* modules/INSTALL* modules/devices.sh modules/devfs_symlinks
-%attr(755,root,root)			%{_bindir}/*
-%attr(755,root,root) 			%{_datadir}/misc/*
-%attr(755,root,root) 			%{_libdir}/lib*.so.*
+%attr(755,root,root) %{_bindir}/*
+%attr(755,root,root) %{_datadir}/misc/*
+%attr(755,root,root) %{_libdir}/lib*.so.*
 
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %dir		%{_includedir}/libdxr3
-%attr(644,root,root)			%{_includedir}/libdxr3/*
-%attr(644,root,root)			%{_includedir}/linux/*
-%attr(755,root,root) 			%{_libdir}/lib*.so
-%attr(755,root,root) 			%{_libdir}/lib*.la
-%attr(755,root,root) %dir		%{_datadir}/em8300
-%attr(755,root,root) 			%{_datadir}/em8300/*
+%{_includedir}/libdxr3
+%{_includedir}/linux/*
+%attr(755,root,root) %{_libdir}/lib*.so
+%attr(755,root,root) %{_libdir}/lib*.la
+%attr(755,root,root) %dir %{_datadir}/em8300
+%attr(755,root,root) %{_datadir}/em8300/*
 
 %files gtk
 %defattr(644,root,root,755)
-%attr(755,root,root)			%{_xbindir}/*
+%attr(755,root,root) %{_xbindir}/*
