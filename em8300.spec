@@ -1,4 +1,8 @@
-# TODO: separate modules to subpackages, standardize them
+#
+# Conditional build:
+# _without_dist_kernel	- without distribution kernel
+#
+# TODO: UP/SMP modules
 Summary:	dxr3 and h+ driver
 Summary(pl):	sterowniki dla dxr3 i h+
 Name:		em8300
@@ -16,14 +20,12 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	gtk+-devel >= 1.2.0
+%{!?_without_dist_kernel:BuildRequires:	kernel-headers}
 BuildRequires:	rpmbuild(macros) >= 1.118
 Requires(post,postun):	/sbin/ldconfig
-Requires(post,postun):	/sbin/depmod
 Requires(post,preun):	/sbin/chkconfig
 Provides:	dxr3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
-
-%define		_xbindir		%{_prefix}/X11R6/bin
 
 %description
 em8300 is a Linux driver for Creative DXR3 and Sigma Designs
@@ -78,6 +80,19 @@ Utility programs for em8300 using gtk+ toolkit.
 %description gtk -l pl
 Programy u¿ytkowe em8300 u¿ywaj±ce biblioteki gtk+.
 
+%package -n kernel-video-em8300
+Summary:	em8300 Linux kernel modules
+Summary(pl):	Modu³y j±dra Linuksa em8300
+Group:		Base/Kernel
+%{!?_without_dist_kernel:%requires_releq_kernel_up}
+Requires(post,postun):	/sbin/depmod
+
+%description -n kernel-video-em8300
+em8300 Linux kernel modules.
+
+%description -n kernel-video-em8300 -l pl
+Modu³y j±dra Linuksa em8300.
+
 %prep
 %setup -q
 %patch0 -p1
@@ -91,43 +106,35 @@ rm -f missing
 %{__automake}
 %configure
 %{__make}
-cd modules
-%{__make}
+
+%{__make} -C modules \
+	KERNEL_LOCATION="%{_kernelsrcdir}" \
+	EM8300_DEBUG="%{rpmcflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{_xbindir}
 
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-cd modules
-%{__make} install-newkern \
+%{__make} -C modules install-newkern \
+	KERNVER=%{_kernel_ver} \
 	prefix=$RPM_BUILD_ROOT
 
-find $RPM_BUILD_ROOT/lib/modules -name "*.o" -print | sed s,$RPM_BUILD_ROOT,, >../mods.lst
-mv INSTALL INSTALL.modules
+mv -f modules/{INSTALL,INSTALL.modules}
 
-install -D em8300.uc $RPM_BUILD_ROOT%{_datadir}/misc/em8300.uc
+install -D modules/em8300.uc $RPM_BUILD_ROOT%{_datadir}/misc/em8300.uc
 
-cd $RPM_BUILD_ROOT
-mv ./%{_bindir}/* ./%{_xbindir}
+install scripts/microcode_upload.pl $RPM_BUILD_ROOT%{_bindir}/em8300_microcode_upload
 
-cd $RPM_BUILD_ROOT%{_datadir}
-install -m 755 em8300/microcode_upload.pl ../bin/em8300_microcode_upload
 install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
 %clean
-rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
-
-%postun
-/sbin/ldconfig
-%depmod %{_kernel_ver}
+rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/ldconfig
-%depmod %{_kernel_ver}
 /sbin/chkconfig --add %{name}
 if [ -f /var/lock/subsys/%{name} ]; then
 	/etc/rc.d/init.d/%{name} restart 1>&2
@@ -143,20 +150,27 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del %{name}
 fi
 
-%files -f mods.lst
+%postun	-p /sbin/ldconfig
+
+%post	-n kernel-video-em8300
+%depmod %{_kernel_ver}
+ 
+%postun	-n kernel-video-em8300
+%depmod %{_kernel_ver}
+
+%files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog COPYING README
-%doc modules/{README*,INSTALL*,devices.sh,devfs_symlinks}
-%attr(755,root,root) %{_bindir}/*
-%attr(755,root,root) %{_datadir}/misc/*
-%attr(755,root,root) %{_libdir}/lib*.so.*
+%doc AUTHORS ChangeLog README modules/{README*,INSTALL*,devices.sh,devfs_symlinks}
+%attr(755,root,root) %{_bindir}/em8300_microcode_upload
+%{_datadir}/misc/em8300.uc
+%attr(755,root,root) %{_libdir}/lib*.so.*.*.*
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
-%attr(755,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
+%config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 
 %files devel
 %defattr(644,root,root,755)
 %{_includedir}/libdxr3
-%{_includedir}/linux/*
+%{_includedir}/linux/*.h
 %attr(755,root,root) %{_libdir}/lib*.so
 %{_libdir}/lib*.la
 %attr(755,root,root) %dir %{_datadir}/em8300
@@ -164,8 +178,15 @@ fi
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/*.a
+%{_libdir}/lib*.a
 
 %files gtk
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_xbindir}/*
+%attr(755,root,root) %{_bindir}/autocal
+%attr(755,root,root) %{_bindir}/dhc
+%attr(755,root,root) %{_bindir}/dxr3view
+%attr(755,root,root) %{_bindir}/em8300setup
+
+%files -n kernel-video-em8300
+%defattr(644,root,root,755)
+/lib/modules/%{_kernel_ver}/kernel/drivers/video/*.o*
