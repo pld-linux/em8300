@@ -4,7 +4,8 @@
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	userspace	# don't build userspace tools
 #
-%ifarch %{ix86} sparc sparc64 alpha ppc
+# sparc disabled - no I2C_ALGOBIT in our kernel24 on sparc
+%ifarch %{ix86} alpha ppc
 %define		_kernelsrcdir	/usr/src/linux-2.4
 %else
 %undefine	with_kernel
