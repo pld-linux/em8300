@@ -113,11 +113,11 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
 
 %postun
 /sbin/ldconfig
-/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
 
 %post
 /sbin/ldconfig
-/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
+/sbin/depmod -a %{!?_without_dist_kernel:-F /boot/System.map-%{_kernel_ver} }%{_kernel_ver}
 /sbin/chkconfig --add %{name}
 if [ -f /var/lock/subsys/%{name} ]; then
 	/etc/rc.d/init.d/%{name} restart 1>&2
