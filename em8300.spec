@@ -87,16 +87,16 @@ Static libraries for em8300.
 Statyczne biblioteki dla em8300.
 
 %package gtk
-Summary:	Utility programs for em8300 using gtk+
-Summary(pl):	Programy u¿ytkowe em8300 u¿ywaj±ce bibliteki gtk+
+Summary:	Utility programs for em8300 using GTK+
+Summary(pl):	Programy u¿ytkowe em8300 u¿ywaj±ce bibliteki GTK+
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
 
 %description gtk
-Utility programs for em8300 using gtk+ toolkit.
+Utility programs for em8300 using GTK+ toolkit.
 
 %description gtk -l pl
-Programy u¿ytkowe em8300 u¿ywaj±ce biblioteki gtk+.
+Programy u¿ytkowe em8300 u¿ywaj±ce biblioteki GTK+.
 
 %package -n kernel-video-em8300
 Summary:	em8300 Linux kernel modules
