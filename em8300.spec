@@ -3,21 +3,17 @@
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
 %bcond_without	userspace	# don't build userspace tools
+%define		snap		20040919
 #
-# sparc(32) disabled - no I2C_ALGOBIT in kernel24
-%ifarch %{ix86} alpha ppc sparc64
-%define		_kernelsrcdir	/usr/src/linux-2.4
-%else
-%undefine	with_kernel
-%endif
 Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
 Name:		em8300
 Version:	0.14.0
-Release:	2
+Release:	0.%{snap}.1
 License:	GPL
 Group:		Applications/System
-Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
+#Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
+Source0:	http://www.kernel.pl/~adasi/%{name}-%{snap}.tar.bz2
 # Source0-md5:	b0ea281df97c830642c5917cfc435d6c
 Source1:	%{name}.init
 Source2:	%{name}.sysconf
@@ -30,7 +26,7 @@ BuildRequires:	libtool
 BuildRequires:	gtk+-devel >= 1.2.0
 %endif
 %if %{with kernel} && %{with dist_kernel}
-BuildRequires:	kernel24-headers >= 2.4
+BuildRequires:	kernel-headers 
 BuildRequires:	rpmbuild(macros) >= 1.118
 %endif
 Requires(post,preun):	/sbin/chkconfig
@@ -102,34 +98,34 @@ Utility programs for em8300 using gtk+ toolkit.
 %description gtk -l pl
 Programy u篡tkowe em8300 u篡waj帷e biblioteki gtk+.
 
-%package -n kernel24-video-em8300
+%package -n kernel-video-em8300
 Summary:	em8300 Linux kernel modules
 Summary(pl):	Modu造 j康ra Linuksa em8300
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_up}
 Requires(post,postun):	/sbin/depmod
 
-%description -n kernel24-video-em8300
+%description -n kernel-video-em8300
 em8300 Linux kernel modules.
 
-%description -n kernel24-video-em8300 -l pl
+%description -n kernel-video-em8300 -l pl
 Modu造 j康ra Linuksa em8300.
 
-%package -n kernel24-smp-video-em8300
+%package -n kernel-smp-video-em8300
 Summary:	em8300 Linux SMP kernel modules
 Summary(pl):	Modu造 j康ra Linuksa SMP em8300
 Group:		Base/Kernel
 %{?with_dist_kernel:%requires_releq_kernel_smp}
 Requires(post,postun):	/sbin/depmod
 
-%description -n kernel24-smp-video-em8300
+%description -n kernel-smp-video-em8300
 em8300 Linux SMP kernel modules.
 
-%description -n kernel24-smp-video-em8300 -l pl
+%description -n kernel-smp-video-em8300 -l pl
 Modu造 j康ra Linuksa SMP em8300.
 
 %prep
-%setup -q
+%setup -q -n %{name}
 %patch0 -p1
 
 %build
@@ -144,17 +140,18 @@ Modu造 j康ra Linuksa SMP em8300.
 %endif
 
 %if %{with kernel}
-%{__make} -C modules \
+cd modules
+%{__make} \
 	KERNEL_LOCATION="%{_kernelsrcdir}" \
 	EM8300_DEBUG="%{rpmcflags} -D__KERNEL_SMP"
 
-for f in em8300.o adv717x.o bt865.o; do
-	mv -f modules/$f modules/$f.smp
+for f in em8300.ko adv717x.ko bt865.ko; do
+	mv -f $f $f.smp
 done
 
-%{__make} -C modules clean
+%{__make} clean
 
-%{__make} -C modules \
+%{__make} \
 	KERNEL_LOCATION="%{_kernelsrcdir}" \
 	EM8300_DEBUG="%{rpmcflags}"
 %endif
@@ -180,7 +177,7 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/em8300/{modules.tar.gz,em8300.sysv}
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/video
-for f in em8300.o adv717x.o bt865.o; do
+for f in em8300.ko adv717x.ko bt865.ko; do
 	install modules/$f \
 		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video/$f
 	install modules/$f.smp \
@@ -210,16 +207,16 @@ fi
 %post	libs -p /sbin/ldconfig
 %postun	libs -p /sbin/ldconfig
 
-%post	-n kernel24-video-em8300
+%post	-n kernel-video-em8300
 %depmod %{_kernel_ver}
  
-%postun	-n kernel24-video-em8300
+%postun	-n kernel-video-em8300
 %depmod %{_kernel_ver}
 
-%post	-n kernel24-smp-video-em8300
+%post	-n kernel-smp-video-em8300
 %depmod %{_kernel_ver}smp
  
-%postun	-n kernel24-smp-video-em8300
+%postun	-n kernel-smp-video-em8300
 %depmod %{_kernel_ver}smp
 
 %if %{with userspace}
@@ -258,11 +255,11 @@ fi
 %endif
 
 %if %{with kernel}
-%files -n kernel24-video-em8300
+%files -n kernel-video-em8300
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}/kernel/drivers/video/*.o*
+/lib/modules/%{_kernel_ver}/kernel/drivers/video/*.ko*
 
-%files -n kernel24-smp-video-em8300
+%files -n kernel-smp-video-em8300
 %defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/*.o*
+/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/*.ko*
 %endif
