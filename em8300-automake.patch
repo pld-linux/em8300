@@ -24,7 +24,7 @@ diff -urN em8300-0.13.0.orig/libdxr3/libac3/Makefile.am em8300-0.13.0/libdxr3/li
 +++ em8300-0.13.0/libdxr3/libac3/Makefile.am	2003-08-08 20:46:34.000000000 +0200
 @@ -1,4 +1,4 @@
 -CFLAGS = @BUILD_LIB_STATIC@ @GLOBAL_CFLAGS@ 
-+AM_CFLAGS = @BUILD_LIB_STATIC@ @GLOBAL_CFLAGS@ 
++AM_CFLAGS = @GLOBAL_CFLAGS@ 
  
  noinst_LTLIBRARIES = libac3.la
  
