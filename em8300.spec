@@ -2,10 +2,12 @@ Summary:	dxr3 and h+ driver
 Summary(pl):	sterowniki dla dxr3 i h+
 Name:		em8300
 Version:	0.12.0
-Release:	0
+Release:	1
 License:	GPL
 Group:		Base/Kernel
 Source0:	http://dxr3.sourceforge.net/download/%{name}-%{version}.tar.gz
+Source1:	%{name}.init
+Source2:	%{name}.sysconf
 URL:		http://dxr3.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
@@ -13,6 +15,7 @@ BuildRequires:	libtool
 BuildRequires:	gtk+-devel
 Requires(post,postun):/sbin/ldconfig
 Requires(post,postun):/sbin/depmod
+Requires(post,preun):/sbin/chkconfig
 Provides:	dxr3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -79,8 +82,7 @@ cd modules
 find $RPM_BUILD_ROOT/lib/modules -name "*.o" -print | sed s,$RPM_BUILD_ROOT,, >../mods.lst
 mv INSTALL INSTALL.modules
 
-install -d $RPM_BUILD_ROOT/%{_datadir}/misc
-install em8300.uc $RPM_BUILD_ROOT/%{_datadir}/misc
+install -D em8300.uc $RPM_BUILD_ROOT/%{_datadir}/misc/em8300.uc
 
 cd $RPM_BUILD_ROOT
 install -d ./%{_xbindir}
@@ -88,6 +90,8 @@ mv ./%{_bindir}/* ./%{_xbindir}
 
 cd $RPM_BUILD_ROOT%{_datadir}
 install -m 755 em8300/microcode_upload.pl ../bin/em8300_microcode_upload
+install -D %{SOURCE1} $RPM_BUILD_ROOT/%{_sysconfdir}/rc.d/init.d/%{name}
+install -D %{SOURCE2} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
@@ -99,6 +103,20 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
 %post
 /sbin/ldconfig
 /sbin/depmod -a
+/sbin/chkconfig --add %{name}
+if [ -f /var/lock/subsys/%{name} ]; then
+	/etc/rc.d/init.d/%{name} restart 1>&2
+else
+	echo "Run \"/etc/rc.d/init.d/%{name} start\" to load %{name} modules."
+fi
+
+%preun
+if [ "$1" = "0" ]; then
+	if [ -f /var/lock/subsys/%{name} ]; then
+		/etc/rc.d/init.d/%{name} stop 1>&2
+	fi
+	/sbin/chkconfig --del %{name}
+fi
 
 %files -f mods.lst
 %defattr(644,root,root,755)
@@ -107,6 +125,8 @@ rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_datadir}/misc/*
 %attr(755,root,root) %{_libdir}/lib*.so.*
+%attr(755,root,root) %{_sysconfdir}/rc.d/init.d/%{name}
+%attr(755,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sysconfig/%{name}
 
 %files devel
 %defattr(644,root,root,755)
