@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# chkconfig: 2345 11 89
+# description: loads em8300 modules and uploads microcode
+
+if [ ! -f /etc/sysconfig/em8300 ] ; then
+   exit 0
+fi
+
+# Source function library.
+. /etc/rc.d/init.d/functions
+
+. /etc/sysconfig/em8300
+
+load_module () { run_cmd "Loading module $1" modprobe "$*"; }
+
+# See how we were called.
+case "$1" in
+  start)
+	is_yes "$BT_LOAD" && load_module bt865 $BT_OPT
+	load_module adv717x $ADV_OPT
+	load_module em8300 $EM_OPT
+	run_cmd "Loading em8300 microcode" "sh -c 'em8300_microcode_upload 2>/dev/null'"
+	touch /var/lock/subsys/em8300
+	;;
+  stop)
+        run_cmd "Removing em8300 modules" "sh -c 'rmmod em8300 adv717x bt865 2>/dev/null'"
+	rm -f /var/lock/subsys/em8300
+	;;
+  restart)
+	$0 stop
+	$0 start
+	;;
+  *)
+	msg_usage "$0 {start|stop|restart}"
+	exit 1
+esac
+
+exit 0
+

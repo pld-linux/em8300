@@ -1,0 +1,16 @@
+#
+# Options for em8300 modules
+#
+# Works for _my_ dxr3. If you have hollywood plus, then set BT_LOAD=no,
+# and use_bt865=0. Try tweaking with other options if your picture is
+# wrong. See project's homepage to know more about them.
+#
+
+BT_LOAD=yes
+
+BT_OPT=""
+
+ADV_OPT="pixelport_16bit=1 pixelport_other_pal=1"
+
+EM_OPT="dicom_fix=1 dicom_control=1 dicom_other_pal=1 activate_loopback=0\
+        use_bt865=1 bt865_ucode_timeout=0"
