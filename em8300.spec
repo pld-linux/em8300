@@ -90,18 +90,21 @@ cd modules
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT
+install -d $RPM_BUILD_ROOT%{_xbindir}
 
-%{__make} install DESTDIR=$RPM_BUILD_ROOT
+%{__make} install \
+	DESTDIR=$RPM_BUILD_ROOT
+
 cd modules
-%{__make} install-newkern prefix=$RPM_BUILD_ROOT
+%{__make} install-newkern \
+	prefix=$RPM_BUILD_ROOT
+
 find $RPM_BUILD_ROOT/lib/modules -name "*.o" -print | sed s,$RPM_BUILD_ROOT,, >../mods.lst
 mv INSTALL INSTALL.modules
 
-install -D em8300.uc $RPM_BUILD_ROOT/%{_datadir}/misc/em8300.uc
+install -D em8300.uc $RPM_BUILD_ROOT%{_datadir}/misc/em8300.uc
 
 cd $RPM_BUILD_ROOT
-install -d ./%{_xbindir}
 mv ./%{_bindir}/* ./%{_xbindir}
 
 cd $RPM_BUILD_ROOT%{_datadir}
