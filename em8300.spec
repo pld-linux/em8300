@@ -4,7 +4,7 @@ Name:		em8300
 Version:	0.12.0
 Release:	1
 License:	GPL
-Group:		Base/Kernel
+Group:		Libraries
 Source0:	http://dxr3.sourceforge.net/download/%{name}-%{version}.tar.gz
 Source1:	%{name}.init
 Source2:	%{name}.sysconf
@@ -12,7 +12,7 @@ URL:		http://dxr3.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
-BuildRequires:	gtk+-devel
+BuildRequires:	gtk+-devel >= 1.2.0
 Requires(post,postun):	/sbin/ldconfig
 Requires(post,postun):	/sbin/depmod
 Requires(post,preun):	/sbin/chkconfig
@@ -39,7 +39,7 @@ formatów video, które te programy rozpoznaj±.
 %package devel
 Summary:	Files required to develop programs using em8300
 Summary(pl):	Pliki potrzebne do tworzenia programów korzystaj±cych z em8300
-Group:		Base/Kernel
+Group:		Development/Libraries
 Requires:	%{name} = %{version}
 
 %description devel
@@ -50,10 +50,22 @@ apps.
 Pliki nag³ówkowe i skrypty przydatne dla autorów aplikacji
 korzystaj±cych z em8300.
 
+%package static
+Summary:	Static libraries for em8300
+Summary(pl):	Statyczne biblioteki dla em8300
+Group:		Development/Libraries
+Requires:	%{name}-devel = %{version}
+
+%description static
+Static libraries for em8300.
+
+%description static -l pl
+Statyczne biblioteki dla em8300.
+
 %package gtk
 Summary:	Utility programs for em8300 using gtk+
 Summary(pl):	Programy u¿ytkowe em8300 u¿ywaj±ce bibliteki gtk+
-Group:		Base/Kernel
+Group:		X11/Applications
 Requires:	%{name} = %{version}
 
 %description gtk
@@ -66,7 +78,9 @@ Programy u¿ytkowe em8300 u¿ywaj±ce biblioteki gtk+.
 %setup -q
 
 %build
+rm -f missing
 sh bootstrap
+%{__automake}
 %configure
 %{__make}
 cd modules
@@ -136,6 +150,10 @@ fi
 %attr(755,root,root) %{_libdir}/lib*.la
 %attr(755,root,root) %dir %{_datadir}/em8300
 %attr(755,root,root) %{_datadir}/em8300/*
+
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/*.a
 
 %files gtk
 %defattr(644,root,root,755)
