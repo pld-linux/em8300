@@ -141,9 +141,16 @@ Modu³y j±dra Linuksa SMP em8300.
 
 %if %{with kernel}
 cd modules
-%{__make} \
-	KERNEL_LOCATION="%{_kernelsrcdir}" \
-	EM8300_DEBUG="%{rpmcflags} -D__KERNEL_SMP"
+rm -rf include
+install -d include/{linux,config}
+ln -sf %{_kernelsrcdir}/config-smp .config
+ln -sf %{_kernelsrcdir}/include/linux/autoconf-up.h include/linux/autoconf.h
+ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
+touch include/config/MARKER
+
+%{__make} -C %{_kernelsrcdir} \
+	KERNEL_LOCATION="%{_kernelsrcdir}" M=$PWD O=$PWD \
+	EM8300_DEBUG="%{rpmcflags} -D__KERNEL_SMP" modules
 
 for f in em8300.ko adv717x.ko bt865.ko; do
 	mv -f $f $f.smp
