@@ -104,8 +104,8 @@ mv ./%{_bindir}/* ./%{_xbindir}
 
 cd $RPM_BUILD_ROOT%{_datadir}
 install -m 755 em8300/microcode_upload.pl ../bin/em8300_microcode_upload
-install -D %{SOURCE1} $RPM_BUILD_ROOT/%{_sysconfdir}/rc.d/init.d/%{name}
-install -D %{SOURCE2} $RPM_BUILD_ROOT/%{_sysconfdir}/sysconfig/%{name}
+install -D %{SOURCE1} $RPM_BUILD_ROOT//etc/rc.d/init.d/%{name}
+install -D %{SOURCE2} $RPM_BUILD_ROOT//etc/sysconfig/%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
@@ -139,8 +139,8 @@ fi
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_datadir}/misc/*
 %attr(755,root,root) %{_libdir}/lib*.so.*
-%attr(755,root,root) %{_sysconfdir}/rc.d/init.d/%{name}
-%attr(755,root,root) %config(noreplace) %verify(not size mtime md5) %{_sysconfdir}/sysconfig/%{name}
+%attr(755,root,root) /etc/rc.d/init.d/%{name}
+%attr(755,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 
 %files devel
 %defattr(644,root,root,755)
