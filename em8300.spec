@@ -1,3 +1,4 @@
+# TODO: separate modules to subpackages, standardize them
 Summary:	dxr3 and h+ driver
 Summary(pl):	sterowniki dla dxr3 i h+
 Name:		em8300
@@ -84,7 +85,7 @@ sh bootstrap
 %configure
 %{__make}
 cd modules
-make
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -104,19 +105,19 @@ mv ./%{_bindir}/* ./%{_xbindir}
 
 cd $RPM_BUILD_ROOT%{_datadir}
 install -m 755 em8300/microcode_upload.pl ../bin/em8300_microcode_upload
-install -D %{SOURCE1} $RPM_BUILD_ROOT//etc/rc.d/init.d/%{name}
-install -D %{SOURCE2} $RPM_BUILD_ROOT//etc/sysconfig/%{name}
+install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
 %clean
 rm -rf $RPM_BUILD_ROOT $RPM_BUILD_DIR/%{name}-%{version}
 
 %postun
 /sbin/ldconfig
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
 
 %post
 /sbin/ldconfig
-/sbin/depmod -a
+/sbin/depmod -a -F /boot/System.map-%{_kernel_ver} %{_kernel_ver}
 /sbin/chkconfig --add %{name}
 if [ -f /var/lock/subsys/%{name} ]; then
 	/etc/rc.d/init.d/%{name} restart 1>&2
