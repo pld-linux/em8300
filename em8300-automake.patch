@@ -1,0 +1,55 @@
+diff -urN em8300-0.13.0.orig/dhc/Makefile.am em8300-0.13.0/dhc/Makefile.am
+--- em8300-0.13.0.orig/dhc/Makefile.am	2001-04-23 04:46:18.000000000 +0200
++++ em8300-0.13.0/dhc/Makefile.am	2003-08-08 20:46:13.000000000 +0200
+@@ -1,6 +1,6 @@
+-CFLAGS = @GLOBAL_CFLAGS@ $(GTK_CFLAGS)
++AM_CFLAGS = @GLOBAL_CFLAGS@ $(GTK_CFLAGS)
+ INCLUDES = -I@srcdir@/include -I/usr/local/include
+-LDFLAGS = $(GTK_LIBS) -lpthread
++AM_LDFLAGS = $(GTK_LIBS) -lpthread
+ 
+ bin_PROGRAMS = dhc
+ noinst_HEADERS = dhc_callback.h dhc_gui.h pixmaps.h
+diff -urN em8300-0.13.0.orig/em8300setup/Makefile.am em8300-0.13.0/em8300setup/Makefile.am
+--- em8300-0.13.0.orig/em8300setup/Makefile.am	2002-10-26 21:47:24.000000000 +0200
++++ em8300-0.13.0/em8300setup/Makefile.am	2003-08-08 20:46:03.000000000 +0200
+@@ -1,4 +1,4 @@
+-CFLAGS = @GLOBAL_CFLAGS@
++AM_CFLAGS = @GLOBAL_CFLAGS@
+ INCLUDES = -I@srcdir@/include -I/usr/local/include
+ 
+ bin_PROGRAMS = em8300setup
+diff -urN em8300-0.13.0.orig/libdxr3/libac3/Makefile.am em8300-0.13.0/libdxr3/libac3/Makefile.am
+--- em8300-0.13.0.orig/libdxr3/libac3/Makefile.am	2001-03-08 06:30:48.000000000 +0100
++++ em8300-0.13.0/libdxr3/libac3/Makefile.am	2003-08-08 20:46:34.000000000 +0200
+@@ -1,4 +1,4 @@
+-CFLAGS = @BUILD_LIB_STATIC@ @GLOBAL_CFLAGS@ 
++AM_CFLAGS = @BUILD_LIB_STATIC@ @GLOBAL_CFLAGS@ 
+ 
+ noinst_LTLIBRARIES = libac3.la
+ 
+diff -urN em8300-0.13.0.orig/libdxr3/Makefile.am em8300-0.13.0/libdxr3/Makefile.am
+--- em8300-0.13.0.orig/libdxr3/Makefile.am	2001-04-21 07:49:25.000000000 +0200
++++ em8300-0.13.0/libdxr3/Makefile.am	2003-08-08 20:46:28.000000000 +0200
+@@ -1,6 +1,6 @@
+ SUBDIRS = libac3
+ 
+-CFLAGS = @GLOBAL_CFLAGS@
++AM_CFLAGS = @GLOBAL_CFLAGS@
+ INCLUDES = -I@srcdir@/include
+ 
+ lib_LTLIBRARIES = libdxr3.la
+diff -urN em8300-0.13.0.orig/overlay/Makefile.am em8300-0.13.0/overlay/Makefile.am
+--- em8300-0.13.0.orig/overlay/Makefile.am	2001-08-02 05:38:53.000000000 +0200
++++ em8300-0.13.0/overlay/Makefile.am	2003-08-08 20:46:46.000000000 +0200
+@@ -1,8 +1,8 @@
+ EXTRA_DIST = configs/
+ 
+-CFLAGS = @GLOBAL_CFLAGS@ $(GTK_CFLAGS)
++AM_CFLAGS = @GLOBAL_CFLAGS@ $(GTK_CFLAGS)
+ INCLUDES = -I@srcdir@/include -I/usr/local/include
+-LDFLAGS = $(GTK_LIBS)
++AM_LDFLAGS = $(GTK_LIBS)
+ 
+ bin_PROGRAMS = autocal dxr3view
+ noinst_HEADERS = autocal.h allblackbut.h overlay.h
