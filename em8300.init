@@ -3,7 +3,8 @@
 # chkconfig:	2345 11 89
 # description:	loads em8300 modules and uploads microcode
 
-   exit 0
+if [ ! -f /etc/sysconfig/em8300 ]; then
+	exit 0
 fi
 
 # Source function library.
