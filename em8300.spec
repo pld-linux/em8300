@@ -150,7 +150,7 @@ fi
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_datadir}/misc/*
 %attr(755,root,root) %{_libdir}/lib*.so.*
-%attr(755,root,root) /etc/rc.d/init.d/%{name}
+%attr(754,root,root) /etc/rc.d/init.d/%{name}
 %attr(755,root,root) %config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
 
 %files devel
