@@ -13,9 +13,9 @@ BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	libtool
 BuildRequires:	gtk+-devel
-Requires(post,postun):/sbin/ldconfig
-Requires(post,postun):/sbin/depmod
-Requires(post,preun):/sbin/chkconfig
+Requires(post,postun):	/sbin/ldconfig
+Requires(post,postun):	/sbin/depmod
+Requires(post,preun):	/sbin/chkconfig
 Provides:	dxr3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -120,8 +120,8 @@ fi
 
 %files -f mods.lst
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog COPYING README
-%doc modules/README* modules/INSTALL* modules/devices.sh modules/devfs_symlinks
+%doc AUTHORS ChangeLog COPYING README 
+%doc modules/{README*,INSTALL*,devices.sh,devfs_symlinks}
 %attr(755,root,root) %{_bindir}/*
 %attr(755,root,root) %{_datadir}/misc/*
 %attr(755,root,root) %{_libdir}/lib*.so.*
