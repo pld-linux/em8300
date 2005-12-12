@@ -22,8 +22,8 @@ URL:		http://dxr3.sourceforge.net/
 %if %{with userspace}
 BuildRequires:	autoconf
 BuildRequires:	automake
-BuildRequires:	libtool
 BuildRequires:	gtk+-devel >= 1.2.0
+BuildRequires:	libtool
 %endif
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-headers 
@@ -216,13 +216,13 @@ fi
 
 %post	-n kernel-video-em8300
 %depmod %{_kernel_ver}
- 
+
 %postun	-n kernel-video-em8300
 %depmod %{_kernel_ver}
 
 %post	-n kernel-smp-video-em8300
 %depmod %{_kernel_ver}smp
- 
+
 %postun	-n kernel-smp-video-em8300
 %depmod %{_kernel_ver}smp
 
@@ -236,7 +236,7 @@ fi
 %{_datadir}/em8300/em8300.pm
 %attr(755,root,root) %{_datadir}/em8300/*.pl
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
-%config(noreplace) %verify(not size mtime md5) /etc/sysconfig/%{name}
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 
 %files libs
 %defattr(644,root,root,755)
