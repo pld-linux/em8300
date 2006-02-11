@@ -29,7 +29,6 @@ BuildRequires:	kernel-headers
 BuildRequires:	rpmbuild(macros) >= 1.118
 %endif
 Requires(post,preun):	/sbin/chkconfig
-Requires:	%{name}-libs = %{version}-%{release}
 Provides:	dxr3
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -48,22 +47,10 @@ pozwalaj± przy u¿yciu tego sterownika na odtwarzanie przez wyj¶cie
 telewizyjne tych kart nie tylko w/w formatów, ale tak¿e wszystkich
 formatów video, które te programy rozpoznaj±.
 
-%package libs
-Summary:	libdxr3 library for DXR3/Hollywood+ cards
-Summary(pl):	Biblioteka libdxr3 do kart DXR3/Hollywood+
-Group:		Libraries
-
-%description libs
-libdxr3 library for DXR3/Hollywood+ cards.
-
-%description libs -l pl
-Biblioteka libdxr3 do kart DXR3/Hollywood+.
-
 %package devel
 Summary:	Files required to develop programs using em8300
 Summary(pl):	Pliki potrzebne do tworzenia programów korzystaj±cych z em8300
 Group:		Development/Libraries
-Requires:	%{name}-libs = %{version}-%{release}
 
 %description devel
 Header files and additional scripts useful for developers of em8300
@@ -72,18 +59,6 @@ apps.
 %description devel -l pl
 Pliki nag³ówkowe i skrypty przydatne dla autorów aplikacji
 korzystaj±cych z em8300.
-
-%package static
-Summary:	Static libraries for em8300
-Summary(pl):	Statyczne biblioteki dla em8300
-Group:		Development/Libraries
-Requires:	%{name}-devel = %{version}-%{release}
-
-%description static
-Static libraries for em8300.
-
-%description static -l pl
-Statyczne biblioteki dla em8300.
 
 %package gtk
 Summary:	Utility programs for em8300 using GTK+
@@ -210,9 +185,6 @@ if [ "$1" = "0" ]; then
 	/sbin/chkconfig --del %{name}
 fi
 
-%post	libs -p /sbin/ldconfig
-%postun	libs -p /sbin/ldconfig
-
 %post	-n kernel-video-em8300
 %depmod %{_kernel_ver}
 
@@ -237,20 +209,9 @@ fi
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 
-%files libs
-%defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/lib*.so.*.*.*
-
 %files devel
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_libdir}/lib*.so
-%{_libdir}/lib*.la
-%{_includedir}/libdxr3
 %{_includedir}/linux/em8300.h
-
-%files static
-%defattr(644,root,root,755)
-%{_libdir}/lib*.a
 
 %files gtk
 %defattr(644,root,root,755)
