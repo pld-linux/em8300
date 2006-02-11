@@ -99,8 +99,8 @@ em8300 Linux SMP kernel modules.
 Modu³y j±dra Linuksa SMP em8300.
 
 %prep
-%setup -q -n %{name}
-%patch0 -p1
+%setup -q -n %{name}-%{version}
+%patch0 -p0
 
 %build
 %if %{with userspace}
