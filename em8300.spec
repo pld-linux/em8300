@@ -16,7 +16,7 @@ Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
 # Source0-md5:	c203eade5e6002d279d50cae4a947964
 Source1:	%{name}.init
 Source2:	%{name}.sysconf
-Patch0:		%{name}-automake.patch
+Patch0:		%{name}-make.patch
 URL:		http://dxr3.sourceforge.net/
 %if %{with userspace}
 BuildRequires:	autoconf
@@ -115,26 +115,37 @@ Modu³y j±dra Linuksa SMP em8300.
 
 %if %{with kernel}
 cd modules
-rm -rf include
-install -d include/{linux,config}
-ln -sf %{_kernelsrcdir}/config-smp .config
-ln -sf %{_kernelsrcdir}/include/linux/autoconf-up.h include/linux/autoconf.h
+for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+    if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
+	exit 1
+    fi
+    rm -rf include/{linux,config,asm}
+    install -d include/{linux,config}
+    ln -sf %{_kernelsrcdir}/config-$cfg .config
+    ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h include/linux/autoconf.h
+%ifarch ppc ppc64
+    install -d include/asm
+    [ ! -d %{_kernelsrcdir}/include/asm-powerpc ] || ln -sf %{_kernelsrcdir}/include/asm-powerpc/* include/asm
+    [ ! -d %{_kernelsrcdir}/include/asm-%{_target_base_arch} ] || ln -snf %{_kernelsrcdir}/include/asm-%{_target_base_arch}/* include/asm
+%else
 ln -sf %{_kernelsrcdir}/include/asm-%{_target_base_arch} include/asm
-touch include/config/MARKER
+%endif
+    ln -sf %{_kernelsrcdir}/Module.symvers-$cfg Module.symvers
+    touch include/config/MARKER
+    cp ../include/linux/em8300.h include/linux/em8300.h
 
-%{__make} -C %{_kernelsrcdir} \
-	KERNEL_LOCATION="%{_kernelsrcdir}" M=$PWD O=$PWD \
-	EM8300_DEBUG="%{rpmcflags} -D__KERNEL_SMP" modules
-
-for f in em8300.ko adv717x.ko bt865.ko; do
-	mv -f $f $f.smp
+    %{__make} -C %{_kernelsrcdir} clean \
+	    RCS_FIND_IGNORE="-name '*.ko' -o" \
+	    M=$PWD O=$PWD \
+	    %{?with_verbose:V=1}
+    %{__make} -C %{_kernelsrcdir} modules \
+	    CC="%{__cc}" CPP="%{__cpp}" \
+	    M=$PWD O=$PWD \
+	    %{?with_verbose:V=1}
+    for i in em8300 adv717x bt865; do
+	    mv $i{,-$cfg}.ko
+    done
 done
-
-%{__make} clean
-
-%{__make} \
-	KERNEL_LOCATION="%{_kernelsrcdir}" \
-	EM8300_DEBUG="%{rpmcflags}"
 %endif
 
 %install
@@ -148,7 +159,7 @@ mv -f modules/{INSTALL,INSTALL.modules}
 
 install -D modules/em8300.uc $RPM_BUILD_ROOT%{_datadir}/misc/em8300.uc
 
-install scripts/microcode_upload.pl $RPM_BUILD_ROOT%{_bindir}/em8300_microcode_upload
+#install scripts/microcode_upload.pl $RPM_BUILD_ROOT%{_bindir}/em8300_microcode_upload
 
 install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
@@ -158,14 +169,18 @@ rm -f $RPM_BUILD_ROOT%{_datadir}/em8300/{modules.tar.gz,em8300.sysv}
 
 %if %{with kernel}
 install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/video
-for f in em8300.ko adv717x.ko bt865.ko; do
-	install modules/$f \
-		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video/$f
-	install modules/$f.smp \
-		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/$f
+for i in adv717x bt865 em8300; do
+    install modules/$i-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video/$i.ko
+done
+%if %{with smp} && %{with dist_kernel}
+for i in adv717x bt865 em8300; do
+    install modules/$i-smp.ko \
+		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/$i.ko
 done
 %endif
-
+%endif
+					
 %clean
 rm -rf $RPM_BUILD_ROOT
 
