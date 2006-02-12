@@ -2,8 +2,9 @@
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
+%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
-%define		snap		20040919
+%bcond_with	verbose		# verbose build (V=1)
 #
 Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
@@ -159,8 +160,6 @@ mv -f modules/{INSTALL,INSTALL.modules}
 
 install -D modules/em8300.uc $RPM_BUILD_ROOT%{_datadir}/misc/em8300.uc
 
-#install scripts/microcode_upload.pl $RPM_BUILD_ROOT%{_bindir}/em8300_microcode_upload
-
 install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
 
@@ -215,8 +214,7 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog README modules/{README*,INSTALL*,devices.sh,devfs_symlinks}
-%attr(755,root,root) %{_bindir}/em8300_microcode_upload
+%doc AUTHORS ChangeLog README modules/{README*,INSTALL*,devices.sh}
 %{_datadir}/misc/em8300.uc
 %dir %{_datadir}/em8300
 %{_datadir}/em8300/em8300.pm
