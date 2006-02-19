@@ -1,4 +1,6 @@
 #
+# TODO: .init script calls em8300_microcode_upload, which has been killed
+#
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
@@ -23,7 +25,6 @@ URL:		http://dxr3.sourceforge.net/
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gtk+-devel >= 1.2.0
-BuildRequires:	libtool
 %endif
 %if %{with kernel} && %{with dist_kernel}
 BuildRequires:	kernel-headers 
@@ -49,17 +50,15 @@ telewizyjne tych kart nie tylko w/w formatów, ale tak¿e wszystkich
 formatów video, które te programy rozpoznaj±.
 
 %package devel
-Summary:	Files required to develop programs using em8300
-Summary(pl):	Pliki potrzebne do tworzenia programów korzystaj±cych z em8300
+Summary:	Header file to communicate with em8300 Linux kernel modules
+Summary(pl):	Plik nag³ówkowy do komunikacji z modu³ami j±dra Linuksa em8300
 Group:		Development/Libraries
 
 %description devel
-Header files and additional scripts useful for developers of em8300
-apps.
+Header file to communicate with em8300 Linux kernel modules.
 
 %description devel -l pl
-Pliki nag³ówkowe i skrypty przydatne dla autorów aplikacji
-korzystaj±cych z em8300.
+Plik nag³ówkowy do komunikacji z modu³ami j±dra Linuksa em8300.
 
 %package gtk
 Summary:	Utility programs for em8300 using GTK+
@@ -105,7 +104,6 @@ Modu³y j±dra Linuksa SMP em8300.
 
 %build
 %if %{with userspace}
-%{__libtoolize}
 %{__aclocal} -I autotools
 %{__autoconf}
 %{__autoheader}
@@ -156,14 +154,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-mv -f modules/{INSTALL,INSTALL.modules}
-
-install -D modules/em8300.uc $RPM_BUILD_ROOT%{_datadir}/misc/em8300.uc
-
 install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
-
-rm -f $RPM_BUILD_ROOT%{_datadir}/em8300/{modules.tar.gz,em8300.sysv}
 %endif
 
 %if %{with kernel}
@@ -179,7 +171,7 @@ for i in adv717x bt865 em8300; do
 done
 %endif
 %endif
-					
+
 %clean
 rm -rf $RPM_BUILD_ROOT
 
@@ -214,11 +206,13 @@ fi
 %if %{with userspace}
 %files
 %defattr(644,root,root,755)
-%doc AUTHORS ChangeLog README modules/{README*,INSTALL*,devices.sh}
-%{_datadir}/misc/em8300.uc
+%doc AUTHORS ChangeLog README modules/README*
+%attr(755,root,root) %{_bindir}/em8300setup
+/lib/firmware/em8300.bin
 %dir %{_datadir}/em8300
 %{_datadir}/em8300/em8300.pm
 %attr(755,root,root) %{_datadir}/em8300/*.pl
+%{_mandir}/man1/em8300setup.1*
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
 
@@ -231,7 +225,6 @@ fi
 %attr(755,root,root) %{_bindir}/autocal
 %attr(755,root,root) %{_bindir}/dhc
 %attr(755,root,root) %{_bindir}/dxr3view
-%attr(755,root,root) %{_bindir}/em8300setup
 %endif
 
 %if %{with kernel}
@@ -239,7 +232,9 @@ fi
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/video/*.ko*
 
+%if %{with dist_kernel} && %{with smp}
 %files -n kernel-smp-video-em8300
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}smp/kernel/drivers/video/*.ko*
+%endif
 %endif
