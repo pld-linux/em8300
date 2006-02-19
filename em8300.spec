@@ -32,6 +32,7 @@ BuildRequires:	rpmbuild(macros) >= 1.118
 %endif
 Requires(post,preun):	/sbin/chkconfig
 Provides:	dxr3
+Obsoletes:	em8300-libs
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -53,6 +54,7 @@ formatów video, które te programy rozpoznaj±.
 Summary:	Header file to communicate with em8300 Linux kernel modules
 Summary(pl):	Plik nag³ówkowy do komunikacji z modu³ami j±dra Linuksa em8300
 Group:		Development/Libraries
+Obsoletes:	em8300-static
 
 %description devel
 Header file to communicate with em8300 Linux kernel modules.
