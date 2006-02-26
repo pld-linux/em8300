@@ -1,6 +1,3 @@
-#
-# TODO: .init script calls em8300_microcode_upload, which has been killed
-#
 # Conditional build:
 %bcond_without	dist_kernel	# without distribution kernel
 %bcond_without	kernel		# don't build kernel modules
