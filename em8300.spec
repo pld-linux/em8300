@@ -1,3 +1,5 @@
+# TODO
+# - cc
 #
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
