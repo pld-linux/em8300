@@ -8,6 +8,11 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 
+%ifarch sparc
+# kernel modules won't build on sparc32, no I2C in kernel
+%undefine	with_kernel
+%endif
+
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
@@ -16,7 +21,7 @@ Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
 Name:		em8300
 Version:	0.15.2
-Release:	1
+Release:	2
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
