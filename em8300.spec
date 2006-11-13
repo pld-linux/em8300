@@ -13,7 +13,7 @@
 %undefine	with_kernel
 %endif
 
-%if %{without kernel}
+%if !%{with kernel}
 %undefine	with_dist_kernel
 %endif
 
