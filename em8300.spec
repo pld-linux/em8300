@@ -31,9 +31,10 @@ Source2:	%{name}.sysconf
 Patch0:		%{name}-make.patch
 URL:		http://dxr3.sourceforge.net/
 %if %{with userspace}
-BuildRequires:	autoconf
+BuildRequires:	autoconf >= 2.13
 BuildRequires:	automake
-BuildRequires:	gtk+-devel >= 1.2.0
+BuildRequires:	gtk+2-devel >= 1:2.0.0
+BuildRequires:	pkgconfig
 %endif
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel-module-build >= 3:2.6.14}
@@ -235,6 +236,8 @@ fi
 %{_mandir}/man1/em8300setup.1*
 %attr(754,root,root) /etc/rc.d/init.d/%{name}
 %config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
+# subpackage? (is it usable without alsa?)
+%{_datadir}/alsa/cards/EM8300.conf
 
 %files devel
 %defattr(644,root,root,755)
