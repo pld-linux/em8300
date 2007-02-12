@@ -23,7 +23,7 @@
 %endif
 
 Summary:	DXR3 and H+ driver
-Summary(pl):	Sterowniki dla DXR3 i H+
+Summary(pl.UTF-8):   Sterowniki dla DXR3 i H+
 Name:		em8300
 Version:	0.16.0
 Release:	3
@@ -57,41 +57,41 @@ Additionaly Xine and MPlayer with help of this driver allow you to
 play all the video formats that they recognise through the tv-out of
 these cards.
 
-%description -l pl
+%description -l pl.UTF-8
 em8300 pozwala na uruchomienie pod Linuksem kart Creative DXR3 i Sigma
-Designs Hollywood+. Obie karty, o prawie identycznej konstrukcji s±
-sprzÍtowymi dekoderami MPEG1, MPEG2 i AC3. Programy Xine i MPlayer
-pozwalaj± przy uøyciu tego sterownika na odtwarzanie przez wyj∂cie
-telewizyjne tych kart nie tylko w/w formatÛw, ale takøe wszystkich
-formatÛw video, ktÛre te programy rozpoznaj±.
+Designs Hollywood+. Obie karty, o prawie identycznej konstrukcji sƒÖ
+sprzƒôtowymi dekoderami MPEG1, MPEG2 i AC3. Programy Xine i MPlayer
+pozwalajƒÖ przy u≈ºyciu tego sterownika na odtwarzanie przez wyj≈õcie
+telewizyjne tych kart nie tylko w/w format√≥w, ale tak≈ºe wszystkich
+format√≥w video, kt√≥re te programy rozpoznajƒÖ.
 
 %package devel
 Summary:	Header file to communicate with em8300 Linux kernel modules
-Summary(pl):	Plik nag≥Ûwkowy do komunikacji z modu≥ami j±dra Linuksa em8300
+Summary(pl.UTF-8):   Plik nag≈Ç√≥wkowy do komunikacji z modu≈Çami jƒÖdra Linuksa em8300
 Group:		Development/Libraries
 Obsoletes:	em8300-static
 
 %description devel
 Header file to communicate with em8300 Linux kernel modules.
 
-%description devel -l pl
-Plik nag≥Ûwkowy do komunikacji z modu≥ami j±dra Linuksa em8300.
+%description devel -l pl.UTF-8
+Plik nag≈Ç√≥wkowy do komunikacji z modu≈Çami jƒÖdra Linuksa em8300.
 
 %package gtk
 Summary:	Utility programs for em8300 using GTK+
-Summary(pl):	Programy uøytkowe em8300 uøywaj±ce bibliteki GTK+
+Summary(pl.UTF-8):   Programy u≈ºytkowe em8300 u≈ºywajƒÖce bibliteki GTK+
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
 
 %description gtk
 Utility programs for em8300 using GTK+ toolkit.
 
-%description gtk -l pl
-Programy uøytkowe em8300 uøywaj±ce biblioteki GTK+.
+%description gtk -l pl.UTF-8
+Programy u≈ºytkowe em8300 u≈ºywajƒÖce biblioteki GTK+.
 
 %package -n kernel%{_alt_kernel}-video-em8300
 Summary:	em8300 Linux kernel modules
-Summary(pl):	Modu≥y j±dra Linuksa em8300
+Summary(pl.UTF-8):   Modu≈Çy jƒÖdra Linuksa em8300
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
@@ -102,12 +102,12 @@ Requires(postun):	%releq_kernel_up
 %description -n kernel%{_alt_kernel}-video-em8300
 em8300 Linux kernel modules.
 
-%description -n kernel%{_alt_kernel}-video-em8300 -l pl
-Modu≥y j±dra Linuksa em8300.
+%description -n kernel%{_alt_kernel}-video-em8300 -l pl.UTF-8
+Modu≈Çy jƒÖdra Linuksa em8300.
 
 %package -n kernel%{_alt_kernel}-smp-video-em8300
 Summary:	em8300 Linux SMP kernel modules
-Summary(pl):	Modu≥y j±dra Linuksa SMP em8300
+Summary(pl.UTF-8):   Modu≈Çy jƒÖdra Linuksa SMP em8300
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
@@ -118,8 +118,8 @@ Requires(postun):	%releq_kernel_smp
 %description -n kernel%{_alt_kernel}-smp-video-em8300
 em8300 Linux SMP kernel modules.
 
-%description -n kernel%{_alt_kernel}-smp-video-em8300 -l pl
-Modu≥y j±dra Linuksa SMP em8300.
+%description -n kernel%{_alt_kernel}-smp-video-em8300 -l pl.UTF-8
+Modu≈Çy jƒÖdra Linuksa SMP em8300.
 
 %prep
 %setup -q
