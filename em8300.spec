@@ -23,7 +23,7 @@
 %endif
 
 Summary:	DXR3 and H+ driver
-Summary(pl.UTF-8):   Sterowniki dla DXR3 i H+
+Summary(pl.UTF-8):	Sterowniki dla DXR3 i H+
 Name:		em8300
 Version:	0.16.0
 Release:	3
@@ -67,7 +67,7 @@ formatów video, które te programy rozpoznają.
 
 %package devel
 Summary:	Header file to communicate with em8300 Linux kernel modules
-Summary(pl.UTF-8):   Plik nagłówkowy do komunikacji z modułami jądra Linuksa em8300
+Summary(pl.UTF-8):	Plik nagłówkowy do komunikacji z modułami jądra Linuksa em8300
 Group:		Development/Libraries
 Obsoletes:	em8300-static
 
@@ -79,7 +79,7 @@ Plik nagłówkowy do komunikacji z modułami jądra Linuksa em8300.
 
 %package gtk
 Summary:	Utility programs for em8300 using GTK+
-Summary(pl.UTF-8):   Programy użytkowe em8300 używające bibliteki GTK+
+Summary(pl.UTF-8):	Programy użytkowe em8300 używające bibliteki GTK+
 Group:		X11/Applications
 Requires:	%{name} = %{version}-%{release}
 
@@ -91,7 +91,7 @@ Programy użytkowe em8300 używające biblioteki GTK+.
 
 %package -n kernel%{_alt_kernel}-video-em8300
 Summary:	em8300 Linux kernel modules
-Summary(pl.UTF-8):   Moduły jądra Linuksa em8300
+Summary(pl.UTF-8):	Moduły jądra Linuksa em8300
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
@@ -107,7 +107,7 @@ Moduły jądra Linuksa em8300.
 
 %package -n kernel%{_alt_kernel}-smp-video-em8300
 Summary:	em8300 Linux SMP kernel modules
-Summary(pl.UTF-8):   Moduły jądra Linuksa SMP em8300
+Summary(pl.UTF-8):	Moduły jądra Linuksa SMP em8300
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
