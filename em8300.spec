@@ -4,6 +4,7 @@
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
+%bcond_without	up		# don't build UP module
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
@@ -18,7 +19,7 @@
 %undefine	with_kernel
 %endif
 
-%if !%{with kernel}
+%if %{without kernel}
 %undefine	with_dist_kernel
 %endif
 
@@ -26,7 +27,7 @@ Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
 Name:		em8300
 Version:	0.16.0
-Release:	3
+Release:	4
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
@@ -256,9 +257,11 @@ fi
 %endif
 
 %if %{with kernel}
+%if %{with up} || %{without dist_kernel}
 %files -n kernel%{_alt_kernel}-video-em8300
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/video/*.ko*
+%endif
 
 %if %{with dist_kernel} && %{with smp}
 %files -n kernel%{_alt_kernel}-smp-video-em8300
