@@ -12,25 +12,32 @@ fi
 
 . /etc/sysconfig/em8300
 
-RETVAL=0
-# See how we were called.
-case "$1" in
-  start|reload|force-reload)
+start() {
 	is_yes "$BT_LOAD" && _modprobe single bt865 $BT_OPT
 	_modprobe single adv717x $ADV_OPT
 	_modprobe single em8300 $EM_OPT
 	run_cmd "Uploading em8300 microcode" "sh -c 'em8300setup 2>/dev/null'"
 	[ $? -ne 0 ] && RETVAL=1
+}
+
+stop() {
+	run_cmd "Removing em8300 modules" "sh -c 'rmmod em8300 adv717x bt865 2>/dev/null'"
+}
+
+RETVAL=0
+# See how we were called.
+case "$1" in
+  start|reload|force-reload)
+  	start
 	;;
   stop)
-	run_cmd "Removing em8300 modules" "sh -c 'rmmod em8300 adv717x bt865 2>/dev/null'"
+  	stop
 	;;
   status)
 	;;
   restart)
-	$0 stop
-	$0 start
-	exit $?
+	stop
+	start
 	;;
   *)
 	msg_usage "$0 {start|stop|restart|reload|force-reload|status}"
