@@ -23,11 +23,12 @@
 %undefine	with_dist_kernel
 %endif
 
+%define		_rel	53
 Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
 Name:		em8300
 Version:	0.16.0
-Release:	53
+Release:	%{_rel}
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
