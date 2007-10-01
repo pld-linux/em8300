@@ -1,0 +1,11 @@
+--- modules/Makefile.old	2006-01-28 12:43:50.000000000 +0000
++++ modules/Makefile	2006-01-28 12:43:57.000000000 +0000
+@@ -101,8 +101,6 @@
+ # The following hack tests for old kernels (2.4 and old 2.5).
+ ifneq ($(TOPDIR),$(shell /bin/pwd))
+ 
+-include $(TOPDIR)/Rules.make
+-
+ em8300.o: $(em8300-objs)
+ 	$(LD) $(LDFLAGS) $(LDFLAGS_MODULE) -r -o $@ $(em8300-objs)
+ 
