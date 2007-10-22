@@ -45,9 +45,10 @@ BuildRequires:	pkgconfig
 %endif
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
-BuildRequires:	rpmbuild(macros) >= 1.308
 %endif
+BuildRequires:	rpmbuild(macros) >= 1.308
 Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 Provides:	dxr3
 Obsoletes:	em8300-libs
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
@@ -163,7 +164,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 	%{__make} -C %{_kernelsrcdir} modules \
-	        CC="%{__cc}" CPP="%{__cpp}" \
+			CC="%{__cc}" CPP="%{__cpp}" \
 		SYSSRC=%{_kernelsrcdir} \
 		SYSOUT=$PWD/o \
 		M=$PWD O=$PWD/o \
@@ -205,17 +206,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/chkconfig --add %{name}
-if [ -f /var/lock/subsys/%{name} ]; then
-	/etc/rc.d/init.d/%{name} restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/%{name} start\" to load %{name} modules."
-fi
+%service %{name} restart
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/%{name} ]; then
-		/etc/rc.d/init.d/%{name} stop 1>&2
-	fi
+	%service stop
 	/sbin/chkconfig --del %{name}
 fi
 
