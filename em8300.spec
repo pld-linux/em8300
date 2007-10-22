@@ -10,19 +10,19 @@
 %bcond_with	verbose		# verbose build (V=1)
 %bcond_with	grsec_kernel	# build for kernel-grsecurity
 #
-%if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
-%define	alt_kernel	grsecurity
-%endif
-#
 %ifarch sparc
 # kernel modules won't build on sparc32, no I2C in kernel
 %undefine	with_kernel
 %endif
-
+#
 %if %{without kernel}
 %undefine	with_dist_kernel
 %endif
-
+#
+%if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
+%define	alt_kernel	grsecurity
+%endif
+#
 %define		_rel	55
 Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
@@ -45,8 +45,8 @@ BuildRequires:	pkgconfig
 %endif
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
-%endif
 BuildRequires:	rpmbuild(macros) >= 1.308
+%endif
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
 Provides:	dxr3
