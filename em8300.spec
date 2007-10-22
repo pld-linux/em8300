@@ -98,6 +98,7 @@ Programy u¿ytkowe em8300 u¿ywaj±ce biblioteki GTK+.
 Summary:	em8300 Linux kernel modules
 Summary(pl):	Modu³y j±dra Linuksa em8300
 Group:		Base/Kernel
+Release:	%{_rel}@%{_kernel_ver_str}
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
 %requires_releq_kernel_up
@@ -113,6 +114,7 @@ Modu³y j±dra Linuksa em8300.
 %package -n kernel%{_alt_kernel}-smp-video-em8300
 Summary:	em8300 Linux SMP kernel modules
 Summary(pl):	Modu³y j±dra Linuksa SMP em8300
+Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
