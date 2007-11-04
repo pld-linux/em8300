@@ -26,18 +26,19 @@
 %endif
 
 %define		_rel	56
+%define		pname	em8300
 Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
-Name:		em8300
+Name:		%{pname}%{_alt_kernel}
 Version:	0.16.0
 Release:	%{_rel}
 License:	GPL
 Group:		Applications/System
-Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/dxr3/%{pname}-%{version}.tar.gz
 # Source0-md5:	9e9b769b99927079b4fd6ec423d95049
-Source1:	%{name}.init
-Source2:	%{name}.sysconf
-Patch0:		%{name}-make.patch
+Source1:	%{pname}.init
+Source2:	%{pname}.sysconf
+Patch0:		%{pname}-make.patch
 URL:		http://dxr3.sourceforge.net/
 %if %{with userspace}
 BuildRequires:	autoconf >= 2.13
@@ -86,7 +87,7 @@ Plik nag³ówkowy do komunikacji z modu³ami j±dra Linuksa em8300.
 Summary:	Utility programs for em8300 using GTK+
 Summary(pl):	Programy u¿ytkowe em8300 u¿ywaj±ce bibliteki GTK+
 Group:		X11/Applications
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{pname} = %{version}-%{release}
 
 %description gtk
 Utility programs for em8300 using GTK+ toolkit.
@@ -129,7 +130,7 @@ em8300 Linux SMP kernel modules.
 Modu³y j±dra Linuksa SMP em8300.
 
 %prep
-%setup -q
+%setup -q -n %{pname}-%{version}
 %patch0 -p0
 
 %build
@@ -187,8 +188,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{pname}
+install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{pname}
 %endif
 
 %if %{with kernel}
@@ -209,13 +210,13 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add %{name}
-%service %{name} restart
+/sbin/chkconfig --add %{pname}
+%service %{pname} restart
 
 %preun
 if [ "$1" = "0" ]; then
 	%service stop
-	/sbin/chkconfig --del %{name}
+	/sbin/chkconfig --del %{pname}
 fi
 
 %post	-n kernel%{_alt_kernel}-video-em8300
@@ -240,8 +241,8 @@ fi
 %{_datadir}/em8300/em8300.pm
 %attr(755,root,root) %{_datadir}/em8300/*.pl
 %{_mandir}/man1/em8300setup.1*
-%attr(754,root,root) /etc/rc.d/init.d/%{name}
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
+%attr(754,root,root) /etc/rc.d/init.d/%{pname}
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{pname}
 # subpackage? (is it usable without alsa?)
 %{_datadir}/alsa/cards/EM8300.conf
 
