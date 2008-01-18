@@ -25,7 +25,7 @@
 %undefine	with_userspace
 %endif
 
-%define		_rel	57
+%define		_rel	58
 %define		pname	em8300
 Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
