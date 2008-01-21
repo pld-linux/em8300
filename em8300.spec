@@ -54,6 +54,9 @@ Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
 Provides:	dxr3
 Obsoletes:	em8300-libs
+%if %{without userspace}
+ExcludeArch:	sparc
+%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
