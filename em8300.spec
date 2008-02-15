@@ -8,13 +8,9 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
-%bcond_with	grsec_kernel	# build for kernel-grsecurity
 
 %if %{without kernel}
 %undefine	with_dist_kernel
-%endif
-%if %{with dist_kernel} && %{with grsec_kernel}
-%define	alt_kernel	grsecurity
 %endif
 
 %ifarch sparc
@@ -26,13 +22,12 @@
 %undefine	with_userspace
 %endif
 
-%define		_rel	61
 %define		pname	em8300
 Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
 Name:		%{pname}%{_alt_kernel}
 Version:	0.16.0
-Release:	%{_rel}
+Release:	62
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/dxr3/%{pname}-%{version}.tar.gz
@@ -103,12 +98,8 @@ Programy u¿ytkowe em8300 u¿ywaj±ce biblioteki GTK+.
 Summary:	em8300 Linux kernel modules
 Summary(pl):	Modu³y j±dra Linuksa em8300
 Group:		Base/Kernel
-Release:	%{_rel}@%{_kernel_ver_str}
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel_up
-Requires(postun):	%releq_kernel_up
-%endif
 
 %description -n kernel%{_alt_kernel}-video-em8300
 em8300 Linux kernel modules.
@@ -119,13 +110,9 @@ Modu³y j±dra Linuksa em8300.
 %package -n kernel%{_alt_kernel}-smp-video-em8300
 Summary:	em8300 Linux SMP kernel modules
 Summary(pl):	Modu³y j±dra Linuksa SMP em8300
-Release:	%{_rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
 Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
 
 %description -n kernel%{_alt_kernel}-smp-video-em8300
 em8300 Linux SMP kernel modules.
