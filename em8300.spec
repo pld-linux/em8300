@@ -27,7 +27,7 @@ Summary:	DXR3 and H+ driver
 Summary(pl):	Sterowniki dla DXR3 i H+
 Name:		%{pname}%{_alt_kernel}
 Version:	0.16.0
-Release:	62
+Release:	63
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/dxr3/%{pname}-%{version}.tar.gz
