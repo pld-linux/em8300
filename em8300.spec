@@ -4,8 +4,6 @@
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
-%bcond_without	up		# don't build UP module
-%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 
@@ -110,22 +108,6 @@ em8300 Linux kernel modules.
 %description -n kernel%{_alt_kernel}-video-em8300 -l pl.UTF-8
 Moduły jądra Linuksa em8300.
 
-%package -n kernel%{_alt_kernel}-smp-video-em8300
-Summary:	em8300 Linux SMP kernel modules
-Summary(pl.UTF-8):	Moduły jądra Linuksa SMP em8300
-Group:		Base/Kernel
-Requires(post,postun):	/sbin/depmod
-%if %{with dist_kernel}
-%requires_releq_kernel_smp
-Requires(postun):	%releq_kernel_smp
-%endif
-
-%description -n kernel%{_alt_kernel}-smp-video-em8300
-em8300 Linux SMP kernel modules.
-
-%description -n kernel%{_alt_kernel}-smp-video-em8300 -l pl.UTF-8
-Moduły jądra Linuksa SMP em8300.
-
 %prep
 %setup -q -n %{pname}-%{version}
 %patch0 -p0
@@ -142,7 +124,7 @@ Moduły jądra Linuksa SMP em8300.
 
 %if %{with kernel}
 cd modules
-for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
+for cfg in %{?with_dist_kernel:dist}%{!?with_dist_kernel:nondist}; do
 	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
 		exit 1
 	fi
@@ -190,17 +172,11 @@ install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{pname}
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/video
+install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video
 for i in adv717x bt865 em8300; do
-	install modules/$i-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
+	install modules/$i-%{?with_dist_kernel:dist}%{!?with_dist_kernel:nondist}.ko \
 		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video/$i.ko
 done
-%if %{with smp} && %{with dist_kernel}
-for i in adv717x bt865 em8300; do
-	install modules/$i-smp.ko \
-		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/$i.ko
-done
-%endif
 %endif
 
 %clean
@@ -221,12 +197,6 @@ fi
 
 %postun	-n kernel%{_alt_kernel}-video-em8300
 %depmod %{_kernel_ver}
-
-%post	-n kernel%{_alt_kernel}-smp-video-em8300
-%depmod %{_kernel_ver}smp
-
-%postun	-n kernel%{_alt_kernel}-smp-video-em8300
-%depmod %{_kernel_ver}smp
 
 %if %{with userspace}
 %files
@@ -255,15 +225,7 @@ fi
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
 %files -n kernel%{_alt_kernel}-video-em8300
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/video/*.ko*
-%endif
-
-%if %{with dist_kernel} && %{with smp}
-%files -n kernel%{_alt_kernel}-smp-video-em8300
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/*.ko*
-%endif
 %endif
