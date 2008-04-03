@@ -8,33 +8,33 @@
 %bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
-%bcond_with	grsec_kernel	# build for kernel-grsecurity
-#
-%if %{with kernel} && %{with dist_kernel} && %{with grsec_kernel}
-%define	alt_kernel	grsecurity
+
+%if %{without kernel}
+%undefine	with_dist_kernel
 %endif
-#
+
 %ifarch sparc
 # kernel modules won't build on sparc32, no I2C in kernel
 %undefine	with_kernel
 %endif
 
-%if !%{with kernel}
-%undefine	with_dist_kernel
+%if "%{_alt_kernel}" != "%{nil}"
+%undefine	with_userspace
 %endif
 
+%define		pname	em8300
 Summary:	DXR3 and H+ driver
 Summary(pl.UTF-8):	Sterowniki dla DXR3 i H+
-Name:		em8300
+Name:		%{pname}%{_alt_kernel}
 Version:	0.16.0
 Release:	3
 License:	GPL
 Group:		Applications/System
-Source0:	http://dl.sourceforge.net/dxr3/%{name}-%{version}.tar.gz
+Source0:	http://dl.sourceforge.net/dxr3/%{pname}-%{version}.tar.gz
 # Source0-md5:	9e9b769b99927079b4fd6ec423d95049
-Source1:	%{name}.init
-Source2:	%{name}.sysconf
-Patch0:		%{name}-make.patch
+Source1:	%{pname}.init
+Source2:	%{pname}.sysconf
+Patch0:		%{pname}-make.patch
 URL:		http://dxr3.sourceforge.net/
 %if %{with userspace}
 BuildRequires:	autoconf >= 2.13
@@ -47,8 +47,12 @@ BuildRequires:	pkgconfig
 BuildRequires:	rpmbuild(macros) >= 1.308
 %endif
 Requires(post,preun):	/sbin/chkconfig
+Requires:	rc-scripts
 Provides:	dxr3
 Obsoletes:	em8300-libs
+%if %{without userspace}
+ExcludeArch:	sparc
+%endif
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -82,7 +86,7 @@ Plik nagłówkowy do komunikacji z modułami jądra Linuksa em8300.
 Summary:	Utility programs for em8300 using GTK+
 Summary(pl.UTF-8):	Programy użytkowe em8300 używające bibliteki GTK+
 Group:		X11/Applications
-Requires:	%{name} = %{version}-%{release}
+Requires:	%{pname} = %{version}-%{release}
 
 %description gtk
 Utility programs for em8300 using GTK+ toolkit.
@@ -123,7 +127,7 @@ em8300 Linux SMP kernel modules.
 Moduły jądra Linuksa SMP em8300.
 
 %prep
-%setup -q
+%setup -q -n %{pname}-%{version}
 %patch0 -p0
 
 %build
@@ -162,7 +166,7 @@ for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}
 		M=$PWD O=$PWD/o \
 		%{?with_verbose:V=1}
 	%{__make} -C %{_kernelsrcdir} modules \
-	        CC="%{__cc}" CPP="%{__cpp}" \
+        CC="%{__cc}" CPP="%{__cpp}" \
 		SYSSRC=%{_kernelsrcdir} \
 		SYSOUT=$PWD/o \
 		M=$PWD O=$PWD/o \
@@ -181,8 +185,8 @@ rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
-install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{name}
+install -D %{SOURCE1} $RPM_BUILD_ROOT/etc/rc.d/init.d/%{pname}
+install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{pname}
 %endif
 
 %if %{with kernel}
@@ -203,19 +207,13 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %post
-/sbin/chkconfig --add %{name}
-if [ -f /var/lock/subsys/%{name} ]; then
-	/etc/rc.d/init.d/%{name} restart 1>&2
-else
-	echo "Run \"/etc/rc.d/init.d/%{name} start\" to load %{name} modules."
-fi
+/sbin/chkconfig --add %{pname}
+%service %{pname} restart
 
 %preun
 if [ "$1" = "0" ]; then
-	if [ -f /var/lock/subsys/%{name} ]; then
-		/etc/rc.d/init.d/%{name} stop 1>&2
-	fi
-	/sbin/chkconfig --del %{name}
+	%service stop
+	/sbin/chkconfig --del %{pname}
 fi
 
 %post	-n kernel%{_alt_kernel}-video-em8300
@@ -240,8 +238,8 @@ fi
 %{_datadir}/em8300/em8300.pm
 %attr(755,root,root) %{_datadir}/em8300/*.pl
 %{_mandir}/man1/em8300setup.1*
-%attr(754,root,root) /etc/rc.d/init.d/%{name}
-%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{name}
+%attr(754,root,root) /etc/rc.d/init.d/%{pname}
+%config(noreplace) %verify(not md5 mtime size) /etc/sysconfig/%{pname}
 # subpackage? (is it usable without alsa?)
 %{_datadir}/alsa/cards/EM8300.conf
 
