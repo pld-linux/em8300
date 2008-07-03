@@ -7,29 +7,32 @@
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
 
-%if %{without kernel}
-%undefine	with_dist_kernel
-%endif
-
 %ifarch sparc
 # kernel modules won't build on sparc32, no I2C in kernel
 %undefine	with_kernel
 %endif
 
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
+%endif
+%if %{without userspace}
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
 %endif
 
 %define		pname	em8300
 Summary:	DXR3 and H+ driver
 Summary(pl.UTF-8):	Sterowniki dla DXR3 i H+
 Name:		%{pname}%{_alt_kernel}
-Version:	0.16.0
-Release:	3
+Version:	0.17.0
+Release:	1
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/dxr3/%{pname}-%{version}.tar.gz
-# Source0-md5:	9e9b769b99927079b4fd6ec423d95049
+# Source0-md5:	3bb4c33ef59075f60c376f61b673d68f
 Source1:	%{pname}.init
 Source2:	%{pname}.sysconf
 Patch0:		%{pname}-make.patch
@@ -42,7 +45,7 @@ BuildRequires:	pkgconfig
 %endif
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
-BuildRequires:	rpmbuild(macros) >= 1.308
+BuildRequires:	rpmbuild(macros) >= 1.379
 %endif
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
@@ -123,9 +126,8 @@ Moduły jądra Linuksa em8300.
 %endif
 
 %if %{with kernel}
-%build_kernel_modules -C modules -m em8300,adv717x,bt865 <<'EOF'
-	cp ../include/linux/em8300.h o/include/linux/em8300.h
-EOF
+%build_kernel_modules -C modules -m em8300,adv717x,bt865
+%endif
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -139,11 +141,7 @@ install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{pname}
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video
-for i in adv717x bt865 em8300; do
-	install modules/$i-%{?with_dist_kernel:dist}%{!?with_dist_kernel:nondist}.ko \
-		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video/$i.ko
-done
+%install_kernel_modules -m modules/{em8300,adv717x,bt865} -d kernel/drivers/video
 %endif
 
 %clean

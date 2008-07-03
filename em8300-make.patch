@@ -1,8 +1,8 @@
---- modules/Makefile.old	2006-01-28 12:43:50.000000000 +0000
-+++ modules/Makefile	2006-01-28 12:43:57.000000000 +0000
-@@ -101,8 +101,6 @@
- # The following hack tests for old kernels (2.4 and old 2.5).
- ifneq ($(TOPDIR),$(shell /bin/pwd))
+--- em8300-0.17.0/modules/Kbuild~	2008-04-20 02:26:51.000000000 +0300
++++ em8300-0.17.0/modules/Kbuild	2008-07-03 13:54:16.775936847 +0300
+@@ -64,8 +64,6 @@
+ 
+ EXTRA_CFLAGS += -include $(TOPDIR)/include/linux/config.h
  
 -include $(TOPDIR)/Rules.make
 -
