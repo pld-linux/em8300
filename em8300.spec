@@ -123,42 +123,9 @@ Moduły jądra Linuksa em8300.
 %endif
 
 %if %{with kernel}
-cd modules
-for cfg in %{?with_dist_kernel:dist}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	install -d o/include/linux
-	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-%if %{with dist_kernel}
-	%{__make} -j1 -C %{_kernelsrcdir} O=$PWD/o prepare scripts
-%endif
-	install -d o/include/config
-	touch o/include/config/MARKER
-	ln -sf %{_kernelsrcdir}/scripts o/scripts
-
+%build_kernel_modules -C modules -m em8300,adv717x,bt865 <<'EOF'
 	cp ../include/linux/em8300.h o/include/linux/em8300.h
-
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		SYSSRC=%{_kernelsrcdir} \
-		SYSOUT=$PWD/o \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-	%{__make} -C %{_kernelsrcdir} modules \
-        CC="%{__cc}" CPP="%{__cpp}" \
-		SYSSRC=%{_kernelsrcdir} \
-		SYSOUT=$PWD/o \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-
-	for i in em8300 adv717x bt865; do
-		mv $i{,-$cfg}.ko
-	done
-done
-%endif
+EOF
 
 %install
 rm -rf $RPM_BUILD_ROOT
