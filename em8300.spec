@@ -4,34 +4,36 @@
 # Conditional build:
 %bcond_without	dist_kernel	# allow non-distribution kernel
 %bcond_without	kernel		# don't build kernel modules
-%bcond_without	up		# don't build UP module
-%bcond_without	smp		# don't build SMP module
 %bcond_without	userspace	# don't build userspace tools
 %bcond_with	verbose		# verbose build (V=1)
-
-%if %{without kernel}
-%undefine	with_dist_kernel
-%endif
 
 %ifarch sparc
 # kernel modules won't build on sparc32, no I2C in kernel
 %undefine	with_kernel
 %endif
 
+%if %{without kernel}
+%undefine	with_dist_kernel
+%endif
 %if "%{_alt_kernel}" != "%{nil}"
 %undefine	with_userspace
 %endif
+%if %{without userspace}
+# nothing to be placed to debuginfo package
+%define		_enable_debug_packages	0
+%endif
 
 %define		pname	em8300
+%define		rel		1
 Summary:	DXR3 and H+ driver
-Summary(pl):	Sterowniki dla DXR3 i H+
+Summary(pl.UTF-8):	Sterowniki dla DXR3 i H+
 Name:		%{pname}%{_alt_kernel}
-Version:	0.16.0
-Release:	63
+Version:	0.17.0
+Release:	%{rel}
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/dxr3/%{pname}-%{version}.tar.gz
-# Source0-md5:	9e9b769b99927079b4fd6ec423d95049
+# Source0-md5:	3bb4c33ef59075f60c376f61b673d68f
 Source1:	%{pname}.init
 Source2:	%{pname}.sysconf
 Patch0:		%{pname}-make.patch
@@ -44,7 +46,7 @@ BuildRequires:	pkgconfig
 %endif
 %if %{with kernel}
 %{?with_dist_kernel:BuildRequires:	kernel%{_alt_kernel}-module-build >= 3:2.6.14}
-BuildRequires:	rpmbuild(macros) >= 1.308
+BuildRequires:	rpmbuild(macros) >= 1.452
 %endif
 Requires(post,preun):	/sbin/chkconfig
 Requires:	rc-scripts
@@ -62,67 +64,56 @@ Additionaly Xine and MPlayer with help of this driver allow you to
 play all the video formats that they recognise through the tv-out of
 these cards.
 
-%description -l pl
+%description -l pl.UTF-8
 em8300 pozwala na uruchomienie pod Linuksem kart Creative DXR3 i Sigma
-Designs Hollywood+. Obie karty, o prawie identycznej konstrukcji s±
-sprzÍtowymi dekoderami MPEG1, MPEG2 i AC3. Programy Xine i MPlayer
-pozwalaj± przy uøyciu tego sterownika na odtwarzanie przez wyj∂cie
-telewizyjne tych kart nie tylko w/w formatÛw, ale takøe wszystkich
-formatÛw video, ktÛre te programy rozpoznaj±.
+Designs Hollywood+. Obie karty, o prawie identycznej konstrukcji sƒÖ
+sprzƒôtowymi dekoderami MPEG1, MPEG2 i AC3. Programy Xine i MPlayer
+pozwalajƒÖ przy u≈ºyciu tego sterownika na odtwarzanie przez wyj≈õcie
+telewizyjne tych kart nie tylko w/w format√≥w, ale tak≈ºe wszystkich
+format√≥w video, kt√≥re te programy rozpoznajƒÖ.
 
 %package devel
 Summary:	Header file to communicate with em8300 Linux kernel modules
-Summary(pl):	Plik nag≥Ûwkowy do komunikacji z modu≥ami j±dra Linuksa em8300
+Summary(pl.UTF-8):	Plik nag≈Ç√≥wkowy do komunikacji z modu≈Çami jƒÖdra Linuksa em8300
 Group:		Development/Libraries
 Obsoletes:	em8300-static
 
 %description devel
 Header file to communicate with em8300 Linux kernel modules.
 
-%description devel -l pl
-Plik nag≥Ûwkowy do komunikacji z modu≥ami j±dra Linuksa em8300.
+%description devel -l pl.UTF-8
+Plik nag≈Ç√≥wkowy do komunikacji z modu≈Çami jƒÖdra Linuksa em8300.
 
 %package gtk
 Summary:	Utility programs for em8300 using GTK+
-Summary(pl):	Programy uøytkowe em8300 uøywaj±ce bibliteki GTK+
+Summary(pl.UTF-8):	Programy u≈ºytkowe em8300 u≈ºywajƒÖce bibliteki GTK+
 Group:		X11/Applications
 Requires:	%{pname} = %{version}-%{release}
 
 %description gtk
 Utility programs for em8300 using GTK+ toolkit.
 
-%description gtk -l pl
-Programy uøytkowe em8300 uøywaj±ce biblioteki GTK+.
+%description gtk -l pl.UTF-8
+Programy u≈ºytkowe em8300 u≈ºywajƒÖce biblioteki GTK+.
 
 %package -n kernel%{_alt_kernel}-video-em8300
 Summary:	em8300 Linux kernel modules
-Summary(pl):	Modu≥y j±dra Linuksa em8300
+Summary(pl.UTF-8):	Modu≈Çy jƒÖdra Linuksa em8300
+Release:	%{rel}@%{_kernel_vermagic}
 Group:		Base/Kernel
-%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
 Requires(post,postun):	/sbin/depmod
+%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}(vermagic) = %{_kernel_ver}}
+Obsoletes:	kernel%{_alt_kernel}-smp-video-em8300
 
 %description -n kernel%{_alt_kernel}-video-em8300
 em8300 Linux kernel modules.
 
-%description -n kernel%{_alt_kernel}-video-em8300 -l pl
-Modu≥y j±dra Linuksa em8300.
-
-%package -n kernel%{_alt_kernel}-smp-video-em8300
-Summary:	em8300 Linux SMP kernel modules
-Summary(pl):	Modu≥y j±dra Linuksa SMP em8300
-Group:		Base/Kernel
-%{?with_dist_kernel:Requires:	kernel%{_alt_kernel}-smp(vermagic) = %{_kernel_ver}}
-Requires(post,postun):	/sbin/depmod
-
-%description -n kernel%{_alt_kernel}-smp-video-em8300
-em8300 Linux SMP kernel modules.
-
-%description -n kernel%{_alt_kernel}-smp-video-em8300 -l pl
-Modu≥y j±dra Linuksa SMP em8300.
+%description -n kernel%{_alt_kernel}-video-em8300 -l pl.UTF-8
+Modu≈Çy jƒÖdra Linuksa em8300.
 
 %prep
 %setup -q -n %{pname}-%{version}
-%patch0 -p0
+%patch0 -p1
 
 %build
 %if %{with userspace}
@@ -135,41 +126,9 @@ Modu≥y j±dra Linuksa SMP em8300.
 %endif
 
 %if %{with kernel}
-cd modules
-for cfg in %{?with_dist_kernel:%{?with_smp:smp} up}%{!?with_dist_kernel:nondist}; do
-	if [ ! -r "%{_kernelsrcdir}/config-$cfg" ]; then
-		exit 1
-	fi
-	install -d o/include/linux
-	ln -sf %{_kernelsrcdir}/config-$cfg o/.config
-	ln -sf %{_kernelsrcdir}/Module.symvers-$cfg o/Module.symvers
-	ln -sf %{_kernelsrcdir}/include/linux/autoconf-$cfg.h o/include/linux/autoconf.h
-%if %{with dist_kernel}
-	%{__make} -j1 -C %{_kernelsrcdir} O=$PWD/o prepare scripts
-%endif
-	install -d o/include/config
-	touch o/include/config/MARKER
-	ln -sf %{_kernelsrcdir}/scripts o/scripts
-
+%build_kernel_modules -C modules -m em8300,adv717x,bt865 <<'EOF'
 	cp ../include/linux/em8300.h o/include/linux/em8300.h
-
-	%{__make} -C %{_kernelsrcdir} clean \
-		RCS_FIND_IGNORE="-name '*.ko' -o" \
-		SYSSRC=%{_kernelsrcdir} \
-		SYSOUT=$PWD/o \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-	%{__make} -C %{_kernelsrcdir} modules \
-			CC="%{__cc}" CPP="%{__cpp}" \
-		SYSSRC=%{_kernelsrcdir} \
-		SYSOUT=$PWD/o \
-		M=$PWD O=$PWD/o \
-		%{?with_verbose:V=1}
-
-	for i in em8300 adv717x bt865; do
-		mv $i{,-$cfg}.ko
-	done
-done
+EOF
 %endif
 
 %install
@@ -184,17 +143,7 @@ install -D %{SOURCE2} $RPM_BUILD_ROOT/etc/sysconfig/%{pname}
 %endif
 
 %if %{with kernel}
-install -d $RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}{,smp}/kernel/drivers/video
-for i in adv717x bt865 em8300; do
-	install modules/$i-%{?with_dist_kernel:up}%{!?with_dist_kernel:nondist}.ko \
-		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}/kernel/drivers/video/$i.ko
-done
-%if %{with smp} && %{with dist_kernel}
-for i in adv717x bt865 em8300; do
-	install modules/$i-smp.ko \
-		$RPM_BUILD_ROOT/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/$i.ko
-done
-%endif
+%install_kernel_modules -m modules/{em8300,adv717x,bt865} -d kernel/drivers/video
 %endif
 
 %clean
@@ -215,12 +164,6 @@ fi
 
 %postun	-n kernel%{_alt_kernel}-video-em8300
 %depmod %{_kernel_ver}
-
-%post	-n kernel%{_alt_kernel}-smp-video-em8300
-%depmod %{_kernel_ver}smp
-
-%postun	-n kernel%{_alt_kernel}-smp-video-em8300
-%depmod %{_kernel_ver}smp
 
 %if %{with userspace}
 %files
@@ -249,15 +192,7 @@ fi
 %endif
 
 %if %{with kernel}
-%if %{with up} || %{without dist_kernel}
 %files -n kernel%{_alt_kernel}-video-em8300
 %defattr(644,root,root,755)
 /lib/modules/%{_kernel_ver}/kernel/drivers/video/*.ko*
-%endif
-
-%if %{with dist_kernel} && %{with smp}
-%files -n kernel%{_alt_kernel}-smp-video-em8300
-%defattr(644,root,root,755)
-/lib/modules/%{_kernel_ver}smp/kernel/drivers/video/*.ko*
-%endif
 %endif
