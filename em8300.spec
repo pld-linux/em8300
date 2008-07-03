@@ -24,11 +24,12 @@
 %endif
 
 %define		pname	em8300
+%define		rel		1
 Summary:	DXR3 and H+ driver
 Summary(pl.UTF-8):	Sterowniki dla DXR3 i H+
 Name:		%{pname}%{_alt_kernel}
 Version:	0.17.0
-Release:	1
+Release:	%{rel}
 License:	GPL
 Group:		Applications/System
 Source0:	http://dl.sourceforge.net/dxr3/%{pname}-%{version}.tar.gz
@@ -98,6 +99,7 @@ Programy użytkowe em8300 używające biblioteki GTK+.
 %package -n kernel%{_alt_kernel}-video-em8300
 Summary:	em8300 Linux kernel modules
 Summary(pl.UTF-8):	Moduły jądra Linuksa em8300
+Release:	%{rel}@%{_kernel_ver_str}
 Group:		Base/Kernel
 Requires(post,postun):	/sbin/depmod
 %if %{with dist_kernel}
