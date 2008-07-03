@@ -1,0 +1,11 @@
+--- em8300-0.17.0/modules/Kbuild~	2008-04-20 02:26:51.000000000 +0300
++++ em8300-0.17.0/modules/Kbuild	2008-07-03 13:54:16.775936847 +0300
+@@ -64,8 +64,6 @@
+ 
+ EXTRA_CFLAGS += -include $(TOPDIR)/include/linux/config.h
+ 
+-include $(TOPDIR)/Rules.make
+-
+ em8300.o: $(em8300-objs)
+ 	$(LD) $(LDFLAGS) $(LDFLAGS_MODULE) -r -o $@ $(em8300-objs)
+ 
