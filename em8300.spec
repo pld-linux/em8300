@@ -104,6 +104,7 @@ Requires(post,postun):	/sbin/depmod
 %requires_releq_kernel_up
 Requires(postun):	%releq_kernel_up
 %endif
+Obsoletes:	kernel%{_alt_kernel}-smp-video-em8300
 
 %description -n kernel%{_alt_kernel}-video-em8300
 em8300 Linux kernel modules.
@@ -113,7 +114,7 @@ Moduły jądra Linuksa em8300.
 
 %prep
 %setup -q -n %{pname}-%{version}
-%patch0 -p0
+%patch0 -p1
 
 %build
 %if %{with userspace}
@@ -126,7 +127,9 @@ Moduły jądra Linuksa em8300.
 %endif
 
 %if %{with kernel}
-%build_kernel_modules -C modules -m em8300,adv717x,bt865
+%build_kernel_modules -C modules -m em8300,adv717x,bt865 <<'EOF'
+	cp ../include/linux/em8300.h o/include/linux/em8300.h
+EOF
 %endif
 
 %install
