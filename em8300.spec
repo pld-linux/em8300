@@ -39,7 +39,7 @@ Source2:	%{pname}.sysconf
 Patch0:		%{pname}-make.patch
 URL:		http://dxr3.sourceforge.net/
 %if %{with userspace}
-BuildRequires:	autoconf >= 2.13
+BuildRequires:	autoconf >= 2.50
 BuildRequires:	automake
 BuildRequires:	gtk+2-devel >= 1:2.0.0
 BuildRequires:	pkgconfig
